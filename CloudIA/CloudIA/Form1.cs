@@ -14,7 +14,7 @@ using System.Xml;
 
 namespace CloudIA
 {
-    
+
 
     public partial class Form1 : Form
     {
@@ -30,13 +30,13 @@ namespace CloudIA
         public Form1()
         {
             //XmlWriter writer = XmlWriter.Create("ElXML.xml");
-            
-            
+
+
             InitializeComponent();
             AllUsuarios = LoadUsuarios();
             AddGrammar(AllUsuarios);
             richTextBox1.Text += "---LOG--- \n";
-            
+
         }
 
         private void btnEnable_Click(object sender, EventArgs e)
@@ -52,7 +52,7 @@ namespace CloudIA
 
                 throw;
             }
-            
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -72,7 +72,7 @@ namespace CloudIA
 
         }
 
-        
+
         private void Recengine_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             #region Login & Contacts
@@ -82,7 +82,7 @@ namespace CloudIA
                 {
                     if (e.Result.Text == user)
                     {
-                        
+
                         ActiveUser = user;
                         richTextBox1.Text += "\n Trying to connect... \n";
                         AddGrammar(new string[] { CheckPassword(user) });
@@ -134,7 +134,7 @@ namespace CloudIA
                 {
                     if (e.Result.Text == contact)
                     {
-                        richTextBox1.Text += "\n Contact: " + contact +" --- Number: " + GetNumber(ActiveUser, contact) + "\n";
+                        richTextBox1.Text += "\n Contact: " + contact + " --- Number: " + GetNumber(ActiveUser, contact) + "\n";
                         synth.Speak("The number of contact " + contact + " is: " + GetNumber(ActiveUser, contact));
                     }
                 }
@@ -145,7 +145,7 @@ namespace CloudIA
             {
                 case "What time":
                     synth.Speak("The current time is " + DateTime.Now.ToString("HH:mm:ss tt"));
-                    richTextBox1.Text+= "\n" + DateTime.Now.ToString("HH:mm:ss tt") + "\n";
+                    richTextBox1.Text += "\n" + DateTime.Now.ToString("HH:mm:ss tt") + "\n";
                     break;
                 case "Thank you":
                     synth.Speak("I am happy to help!");
@@ -198,7 +198,7 @@ namespace CloudIA
             gb.Append(comm);
             Grammar grammar = new Grammar(gb);
             recengine.LoadGrammarAsync(grammar);
-            
+
         }
 
         void TextToSpeech(string text)
@@ -210,19 +210,13 @@ namespace CloudIA
         {
             XmlDocument doc = new XmlDocument();
             doc.Load("./ElXML.xml");
-
-            XmlNodeList lista = doc.SelectNodes("/Usuarios/Usuario");
-
-            foreach (XmlNode nodo in lista)
-            {
-                if (nodo.Attributes["username"].Value == usuario)
-                {
-                    XmlElement elem = doc.CreateElement("Contacto");
-                    elem.SetAttribute("numero", numero);
-                    elem.SetAttribute("name", nombre);
-                    nodo.AppendChild(elem);
-                }
-            }
+            string xpath = "//Usuario[@username = '" + usuario + "']";
+            XmlNode nodo = doc.SelectSingleNode(xpath);
+            
+            XmlElement elem = doc.CreateElement("Contacto");
+            elem.SetAttribute("numero", numero);
+            elem.SetAttribute("name", nombre);
+            nodo.AppendChild(elem);
             doc.Save("./ElXML.xml");
         }
 
