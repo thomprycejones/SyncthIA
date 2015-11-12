@@ -252,16 +252,9 @@ namespace CloudIA
         {
             XmlDocument doc = new XmlDocument();
             doc.Load("./ElXML.xml");
-            XmlNodeList lista = doc.SelectNodes("/Usuarios/Usuario");
-            string password = null;
-            foreach (XmlNode nodo in lista)
-            {
-                if (nodo.Attributes["username"].Value == usuario)
-                {
-                    password = nodo.Attributes["password"].Value;
-                }
-            }
-            return password;
+            string xpath = "//Usuario[@username = '" + usuario + "']";
+            XmlNode nodo = doc.SelectSingleNode(xpath);
+            return nodo.Attributes["password"].Value;
         }
  
         public string[] GetContacts(string usuario)
