@@ -259,23 +259,19 @@ namespace CloudIA
  
         public string[] GetContacts(string usuario)
         {
-            string[] respuesta = null;
 
             XmlDocument doc = new XmlDocument();
             doc.Load("./ElXML.xml");
-            XmlNodeList lista = doc.SelectNodes("/Usuarios/Usuario");
-            foreach (XmlNode nodo in lista)
+            string xpath = "//Usuario[@username = '" + usuario + "']/Contacto";
+            XmlNodeList nodos = doc.SelectNodes(xpath);
+
+            string[] respuesta = new string[nodos.Count];
+
+            int i = 0;
+            foreach (XmlNode nodo in nodos)
             {
-                if (nodo.Attributes["username"].Value == usuario)
-                {
-                    respuesta = new string[nodo.ChildNodes.Count];
-                    int i = 0;
-                    foreach (XmlNode contacto in nodo.ChildNodes)
-                    {
-                        respuesta[i] = contacto.Attributes["name"].Value;
-                        i++;
-                    }
-                }
+                respuesta[i] = nodo.Attributes["name"].Value;
+                i++;
             }
 
             return respuesta;
