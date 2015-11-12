@@ -62,8 +62,7 @@ namespace CloudIA
             synth.SelectVoice(voices[1].VoiceInfo.Name);
             synth.SelectVoiceByHints(VoiceGender.Female, VoiceAge.Child);
             synth.SetOutputToDefaultAudioDevice();
-            //TextToSpeech("Hi, welcome to CYNTHIA, your personal assistant. Who are you?");
-            TextToSpeech("Hi motherfuckers. Henry today i will suck your delicious cock and eat all of your smegma!");
+            TextToSpeech("Hi, welcome to CYNTHIA, your personal assistant. Who are you?");
 
             // SPEECH TO TEXT
             recengine.SetInputToDefaultAudioDevice();
@@ -105,7 +104,7 @@ namespace CloudIA
                     UserState = true;
                     PasswordState = false;
                 }
-                if (e.Result.Text == CheckPassword(ActiveUser))
+                else if (e.Result.Text == CheckPassword(ActiveUser))
                 {
                     PasswordState = false;
                     ContactState = true;
@@ -185,7 +184,10 @@ namespace CloudIA
                 case "Who are you":
                     synth.Speak("I didn't want to tell you my secret, but if you insist... my name is... JOHN CENA!");
                     break;
-                    
+                case "Add contact":
+                    synth.Speak("I can't make this, you'll have to do it with the panels in the window.");
+                    break;
+
             }
         }
 
@@ -198,7 +200,7 @@ namespace CloudIA
 
         void AddGrammar(string[] words)
         {
-            string[] BaseAndNew = new string[words.Length + 9];
+            string[] BaseAndNew = new string[words.Length + 11];
             for (int i = 0; i < words.Length; i++)
             {
                 BaseAndNew[i] = words[i];
@@ -210,9 +212,10 @@ namespace CloudIA
             BaseAndNew[words.Length + 4] = "Hello Cynthia";
             BaseAndNew[words.Length + 5] = "Are you fine";
             BaseAndNew[words.Length + 6] = "How old";
-            BaseAndNew[words.Length + 6] = "Cynthia be polite";
-            BaseAndNew[words.Length + 7] = "Destroy the empire";
-            BaseAndNew[words.Length + 8] = "Who are you";
+            BaseAndNew[words.Length + 7] = "Cynthia be polite";
+            BaseAndNew[words.Length + 8] = "Destroy the empire";
+            BaseAndNew[words.Length + 9] = "Who are you";
+            BaseAndNew[words.Length + 10] = "Add contact";
             recengine.UnloadAllGrammars();
             Choices comm = new Choices();
             comm.Add(BaseAndNew);
