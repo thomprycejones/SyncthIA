@@ -14,7 +14,7 @@ using System.Xml;
 
 namespace CloudIA
 {
-    
+
 
     public partial class Form1 : Form
     {
@@ -30,13 +30,13 @@ namespace CloudIA
         public Form1()
         {
             //XmlWriter writer = XmlWriter.Create("ElXML.xml");
-            
-            
+
+
             InitializeComponent();
             AllUsuarios = LoadUsuarios();
             AddGrammar(AllUsuarios);
             richTextBox1.Text += "---LOG--- \n";
-            
+
         }
 
         private void btnEnable_Click(object sender, EventArgs e)
@@ -52,7 +52,7 @@ namespace CloudIA
 
                 throw;
             }
-            
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -73,7 +73,7 @@ namespace CloudIA
 
         }
 
-        
+
         private void Recengine_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             #region Login & Contacts
@@ -83,7 +83,7 @@ namespace CloudIA
                 {
                     if (e.Result.Text == user)
                     {
-                        
+
                         ActiveUser = user;
                         richTextBox1.Text += "\n Trying to connect... \n";
                         AddGrammar(new string[] { CheckPassword(user) });
@@ -135,6 +135,7 @@ namespace CloudIA
                 {
                     if (e.Result.Text == contact)
                     {
+
                         if (e.Result.Text == "Darth Vader")
                         {
                             richTextBox1.Text += "\n Contact: " + contact + " --- Number: " + GetNumber(ActiveUser, contact) + "\n";
@@ -145,6 +146,9 @@ namespace CloudIA
                             richTextBox1.Text += "\n Contact: " + contact + " --- Number: " + GetNumber(ActiveUser, contact) + "\n";
                             synth.Speak("The number of contact " + contact + " is: " + GetNumber(ActiveUser, contact));
                         }
+
+                        richTextBox1.Text += "\n Contact: " + contact + " --- Number: " + GetNumber(ActiveUser, contact) + "\n";
+                        synth.Speak("The number of contact " + contact + " is: " + GetNumber(ActiveUser, contact));
                     }
                 }
             }
@@ -154,7 +158,7 @@ namespace CloudIA
             {
                 case "What time":
                     synth.Speak("The current time is " + DateTime.Now.ToString("HH:mm:ss tt"));
-                    richTextBox1.Text+= "\n" + DateTime.Now.ToString("HH:mm:ss tt") + "\n";
+                    richTextBox1.Text += "\n" + DateTime.Now.ToString("HH:mm:ss tt") + "\n";
                     break;
                 case "Thank you":
                     synth.Speak("I am happy to help!");
@@ -216,7 +220,7 @@ namespace CloudIA
             gb.Append(comm);
             Grammar grammar = new Grammar(gb);
             recengine.LoadGrammarAsync(grammar);
-            
+
         }
 
         void TextToSpeech(string text)
@@ -228,19 +232,13 @@ namespace CloudIA
         {
             XmlDocument doc = new XmlDocument();
             doc.Load("./ElXML.xml");
-
-            XmlNodeList lista = doc.SelectNodes("/Usuarios/Usuario");
-
-            foreach (XmlNode nodo in lista)
-            {
-                if (nodo.Attributes["username"].Value == usuario)
-                {
-                    XmlElement elem = doc.CreateElement("Contacto");
-                    elem.SetAttribute("numero", numero);
-                    elem.SetAttribute("name", nombre);
-                    nodo.AppendChild(elem);
-                }
-            }
+            string xpath = "//Usuario[@username = '" + usuario + "']";
+            XmlNode nodo = doc.SelectSingleNode(xpath);
+            
+            XmlElement elem = doc.CreateElement("Contacto");
+            elem.SetAttribute("numero", numero);
+            elem.SetAttribute("name", nombre);
+            nodo.AppendChild(elem);
             doc.Save("./ElXML.xml");
         }
 
@@ -260,13 +258,13 @@ namespace CloudIA
         {
             XmlDocument doc = new XmlDocument();
             doc.Load("./ElXML.xml");
-            XmlNodeList lista = doc.GetElementsByTagName("Usuario");
+            XmlNodeList lista = doc.SelectNodes("//Usuario/@username");
 
             string[] respuesta = new string[lista.Count];
             int i = 0;
             foreach (XmlNode nodo in lista)
             {
-                respuesta[i] = nodo.Attributes["username"].Value;
+                respuesta[i] = nodo.Value;
                 i += 1;
             }
             return respuesta;
@@ -276,37 +274,26 @@ namespace CloudIA
         {
             XmlDocument doc = new XmlDocument();
             doc.Load("./ElXML.xml");
-            XmlNodeList lista = doc.SelectNodes("/Usuarios/Usuario");
-            string password = null;
-            foreach (XmlNode nodo in lista)
-            {
-                if (nodo.Attributes["username"].Value == usuario)
-                {
-                    password = nodo.Attributes["password"].Value;
-                }
-            }
-            return password;
+            string xpath = "//Usuario[@username = '" + usuario + "']";
+            XmlNode nodo = doc.SelectSingleNode(xpath);
+            return nodo.Attributes["password"].Value;
         }
  
         public string[] GetContacts(string usuario)
         {
-            string[] respuesta = null;
 
             XmlDocument doc = new XmlDocument();
             doc.Load("./ElXML.xml");
-            XmlNodeList lista = doc.SelectNodes("/Usuarios/Usuario");
-            foreach (XmlNode nodo in lista)
+            string xpath = "//Usuario[@username = '" + usuario + "']/Contacto/@name";
+            XmlNodeList nodos = doc.SelectNodes(xpath);
+
+            string[] respuesta = new string[nodos.Count];
+
+            int i = 0;
+            foreach (XmlNode nodo in nodos)
             {
-                if (nodo.Attributes["username"].Value == usuario)
-                {
-                    respuesta = new string[nodo.ChildNodes.Count];
-                    int i = 0;
-                    foreach (XmlNode contacto in nodo.ChildNodes)
-                    {
-                        respuesta[i] = contacto.Attributes["name"].Value;
-                        i++;
-                    }
-                }
+                respuesta[i] = nodo.Value;
+                i++;
             }
 
             return respuesta;
@@ -314,24 +301,14 @@ namespace CloudIA
 
         public string GetNumber(string usuario, string contacto)
         {
-            string respuesta = null;
-
             XmlDocument doc = new XmlDocument();
             doc.Load("./ElXML.xml");
-            XmlNodeList lista = doc.SelectNodes("/Usuarios/Usuario");
-            foreach (XmlNode nodo in lista)
-            {
-                if (nodo.Attributes["username"].Value == usuario)
-                {
-                    foreach (XmlNode elcontacto in nodo.ChildNodes)
-                    {
-                        if (elcontacto.Attributes["name"].Value == contacto)
-                            respuesta = elcontacto.Attributes["numero"].Value;
-                    }
-                }
-            }
+            
+            string xpath = "//Usuario[@username = '" + usuario + "']/Contacto[@name = '" + contacto + "']/@numero";
+            XmlNode nodo = doc.SelectSingleNode(xpath);
 
-            return respuesta;
+            return nodo.Value;
+
         }
         
         private void btnAddUser_Click(object sender, EventArgs e)
