@@ -279,24 +279,14 @@ namespace CloudIA
 
         public string GetNumber(string usuario, string contacto)
         {
-            string respuesta = null;
-
             XmlDocument doc = new XmlDocument();
             doc.Load("./ElXML.xml");
-            XmlNodeList lista = doc.SelectNodes("/Usuarios/Usuario");
-            foreach (XmlNode nodo in lista)
-            {
-                if (nodo.Attributes["username"].Value == usuario)
-                {
-                    foreach (XmlNode elcontacto in nodo.ChildNodes)
-                    {
-                        if (elcontacto.Attributes["name"].Value == contacto)
-                            respuesta = elcontacto.Attributes["numero"].Value;
-                    }
-                }
-            }
+            
+            string xpath = "//Usuario[@username = '" + usuario + "']/Contacto[@name = '" + contacto + "']/@numero";
+            XmlNode nodo = doc.SelectSingleNode(xpath);
 
-            return respuesta;
+            return nodo.Value;
+
         }
         
         private void btnAddUser_Click(object sender, EventArgs e)
