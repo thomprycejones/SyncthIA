@@ -236,13 +236,13 @@ namespace CloudIA
         {
             XmlDocument doc = new XmlDocument();
             doc.Load("./ElXML.xml");
-            XmlNodeList lista = doc.GetElementsByTagName("Usuario");
+            XmlNodeList lista = doc.SelectNodes("//Usuario/@username");
 
             string[] respuesta = new string[lista.Count];
             int i = 0;
             foreach (XmlNode nodo in lista)
             {
-                respuesta[i] = nodo.Attributes["username"].Value;
+                respuesta[i] = nodo.Value;
                 i += 1;
             }
             return respuesta;
@@ -262,7 +262,7 @@ namespace CloudIA
 
             XmlDocument doc = new XmlDocument();
             doc.Load("./ElXML.xml");
-            string xpath = "//Usuario[@username = '" + usuario + "']/Contacto";
+            string xpath = "//Usuario[@username = '" + usuario + "']/Contacto/@name";
             XmlNodeList nodos = doc.SelectNodes(xpath);
 
             string[] respuesta = new string[nodos.Count];
@@ -270,7 +270,7 @@ namespace CloudIA
             int i = 0;
             foreach (XmlNode nodo in nodos)
             {
-                respuesta[i] = nodo.Attributes["name"].Value;
+                respuesta[i] = nodo.Value;
                 i++;
             }
 
