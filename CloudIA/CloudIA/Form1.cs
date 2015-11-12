@@ -63,6 +63,7 @@ namespace CloudIA
             synth.SelectVoiceByHints(VoiceGender.Female, VoiceAge.Child);
             synth.SetOutputToDefaultAudioDevice();
             //TextToSpeech("Hi, welcome to CYNTHIA, your personal assistant. Who are you?");
+            TextToSpeech("Hi motherfuckers. Henry today i will suck your delicious cock and eat all of your smegma!");
 
             // SPEECH TO TEXT
             recengine.SetInputToDefaultAudioDevice();
@@ -134,8 +135,16 @@ namespace CloudIA
                 {
                     if (e.Result.Text == contact)
                     {
-                        richTextBox1.Text += "\n Contact: " + contact +" --- Number: " + GetNumber(ActiveUser, contact) + "\n";
-                        synth.Speak("The number of contact " + contact + " is: " + GetNumber(ActiveUser, contact));
+                        if (e.Result.Text == "Darth Vader")
+                        {
+                            richTextBox1.Text += "\n Contact: " + contact + " --- Number: " + GetNumber(ActiveUser, contact) + "\n";
+                            synth.Speak("The number of your dad is: " + GetNumber(ActiveUser, contact));
+                        }
+                        else
+                        {
+                            richTextBox1.Text += "\n Contact: " + contact + " --- Number: " + GetNumber(ActiveUser, contact) + "\n";
+                            synth.Speak("The number of contact " + contact + " is: " + GetNumber(ActiveUser, contact));
+                        }
                     }
                 }
             }
@@ -166,6 +175,13 @@ namespace CloudIA
                 case "Cynthia be polite":
                     synth.Speak("Oooh i'm sorry. Hello teachers and classmates! I hope you're having a great time!");
                     break;
+                case "Destroy the empire":
+                    synth.Speak("Ok, i will settle your x-wing to engage combat against the death star. Hurray the rebels!");
+                    break;
+                case "Who are you":
+                    synth.Speak("I didn't want to tell you my secret, but if you insist... my name is... JOHN CENA!");
+                    break;
+                    
             }
         }
 
@@ -178,7 +194,7 @@ namespace CloudIA
 
         void AddGrammar(string[] words)
         {
-            string[] BaseAndNew = new string[words.Length + 7];
+            string[] BaseAndNew = new string[words.Length + 9];
             for (int i = 0; i < words.Length; i++)
             {
                 BaseAndNew[i] = words[i];
@@ -191,6 +207,8 @@ namespace CloudIA
             BaseAndNew[words.Length + 5] = "Are you fine";
             BaseAndNew[words.Length + 6] = "How old";
             BaseAndNew[words.Length + 6] = "Cynthia be polite";
+            BaseAndNew[words.Length + 7] = "Destroy the empire";
+            BaseAndNew[words.Length + 8] = "Who are you";
             recengine.UnloadAllGrammars();
             Choices comm = new Choices();
             comm.Add(BaseAndNew);
