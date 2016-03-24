@@ -29,8 +29,6 @@ namespace CloudIA
 
         public Form1()
         {
-            //XmlWriter writer = XmlWriter.Create("ElXML.xml");
-
 
             InitializeComponent();
             AllUsuarios = LoadUsuarios();
